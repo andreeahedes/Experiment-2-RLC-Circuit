@@ -74,7 +74,7 @@ plt.title('Resistance 1 Ohm')
 plt.show()
 plt.plot(r1f,r1Vc-function(r1f,*fit1[0]),'x')
 plt.show()
-print(np.mean(r1Vc-function(r1f,*fit1[0])))
+print(np.sqrt((np.mean(r1Vc-function(r1f,*fit1[0]))**2)))
 
 
 r2fbun=2*np.pi*r2fbun
@@ -93,8 +93,8 @@ plt.title('Resistance 2 Ohm')
 plt.show()
 plt.plot(r2f,r2Vc-function(r2f,*fit2[0]),'x')
 plt.show()
-print(np.mean(r2Vc-function(r2f,*fit2[0])))
-print(np.mean(r2Vcbun-function(r2fbun,*fit2[0])))
+print(np.sqrt(np.mean(r2Vc-function(r2f,*fit2[0]))**2))
+print(np.sqrt(np.mean((r2Vcbun-function(r2fbun,*fit2[0]))**2)))
 
 
 r3f=2*np.pi*r3f
@@ -111,7 +111,7 @@ plt.title('Resistance 3 Ohm')
 plt.show()
 plt.plot(r3f,r3Vc-function(r3f,*fit3[0]),'x')
 plt.show()
-print(np.mean(r3Vc-function(r3f,*fit3[0])))
+print(np.sqrt(np.mean((r3Vc-function(r3f,*fit3[0]))**2)))
 
 
 print('The quality factors are Q1=',Qfactor(frequency,fit1),'Q2=',  Qfactor(frequency,fit2),'and Q3=', Qfactor(frequency,fit3))
