@@ -7,12 +7,36 @@ Created on Wed Dec  2 09:33:47 2020
 import numpy as np
 import scipy.optimize as spo
 import matplotlib.pyplot as plt 
+import scipy.interpolate as spi
 
 def function(omega,N, gamma,omega0):
      a=(N)/((omega**2*gamma**2)+(omega**2-omega0**2)**2)**(1/2)
      return a   
-def Qfactor(fit):
-    return max(function(frequency,*fit[0]))/np.std(function(frequency,*fit[0]), ddof=1)
+
+def res(frequency,fit):
+    M=max(function(frequency,*fit[0]))
+    array=function(frequency,*fit[0])
+    f=spi.interp1d(array,frequency)
+    return f(M)/(2*np.pi)
+
+def Qfactor(frequency,fit):
+    M=max(function(frequency,*fit[0]))
+    m=M/np.sqrt(2)
+    array=function(frequency,*fit[0])
+    f=spi.interp1d(array,frequency)
+    a=f(M)
+    sol=f(m)
+    if 2*a/(a-sol)>0:
+        return 2*a/(a-sol)
+    else:
+        return 2*a/(sol-a)
+    
+    
+    
+def Qtheory(R,L,omega0):
+    return omega0*L/R
+
+
 
 L=1e-3
 C=100e-9
@@ -48,6 +72,10 @@ plt.xlabel('Angular Frequency (s^-1)')
 plt.ylabel('Voltage Across the Capacitor (V)')
 plt.title('Resistance 1 Ohm')
 plt.show()
+plt.plot(r1f,r1Vc-function(r1f,*fit1[0]),'x')
+plt.show()
+print(np.mean(r1Vc-function(r1f,*fit1[0])))
+
 
 r2fbun=2*np.pi*r2fbun
 r2f=2*np.pi*r2f
@@ -63,6 +91,11 @@ plt.xlabel('Angular Frequency (s^-1)')
 plt.ylabel('Voltage Across the Capacitor (V)')
 plt.title('Resistance 2 Ohm')
 plt.show()
+plt.plot(r2f,r2Vc-function(r2f,*fit2[0]),'x')
+plt.show()
+print(np.mean(r2Vc-function(r2f,*fit2[0])))
+print(np.mean(r2Vcbun-function(r2fbun,*fit2[0])))
+
 
 r3f=2*np.pi*r3f
 frequency=np.linspace(2*np.pi*6e3,2*np.pi*22e3,100000)
@@ -76,12 +109,16 @@ plt.xlabel('Angular Frequency (s^-1)')
 plt.ylabel('Voltage Across the Capacitor (V)')
 plt.title('Resistance 3 Ohm')
 plt.show()
+plt.plot(r3f,r3Vc-function(r3f,*fit3[0]),'x')
+plt.show()
+print(np.mean(r3Vc-function(r3f,*fit3[0])))
 
-print('The quality factors are Q1=',Qfactor(fit1),'Q2=',  Qfactor(fit2),'and Q3=', Qfactor(fit3))
 
+print('The quality factors are Q1=',Qfactor(frequency,fit1),'Q2=',  Qfactor(frequency,fit2),'and Q3=', Qfactor(frequency,fit3))
 
+print('The theoretical quality factors are Q1=',Qtheory(r1,L,omega0),'Q2=',  Qtheory(r2,L,omega0),'and Q3=', Qtheory(r3,L,omega0))
 
-
+print('The resonant frequecies are', res(frequency,fit1),res(frequency,fit2),res(frequency,fit3))
 
 
 
